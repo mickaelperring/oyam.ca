@@ -44,6 +44,55 @@ console.log("Build environment: " + buildEnv.environment );
  * Build.
  */
 
+var path = require('path')
+var assetManager = function() {
+
+    var manager = {};
+
+    manager.push = function(file, asset) {
+      console.log('=======');
+      console.log("file: %s", file);
+      console.log("requested asset: %s", asset);
+
+      var asset_loc;
+      var destination_asset;
+
+      if (asset[0] == '/' || asset.slice(0,4) == 'http') {
+        asset_loc = asset;
+        destination_asset = asset;
+
+      } else {
+        var p = path.parse(file);
+
+        asset_loc = path.join(p.dir, p.name);
+        destination_asset = path.join("/media/images", asset_loc, asset);
+      }
+
+      console.log("asset location: %s", asset_loc);
+      console.log("asset dest: %s", destination_asset);
+    }
+
+    return manager;
+    
+}();
+
+var markdownitAssets = function(md, options) {
+    options = options || {}
+
+    var defaultRender = md.renderer.rules.image;
+
+    md.renderer.rules.image = function (tokens, idx, options, env, self) {
+      var token = tokens[idx];
+      var aIndex = token.attrIndex('src');
+
+      assetManager.push(env.source_file, token.attrs[aIndex][1]);
+
+      // pass token to default renderer.
+      return defaultRender(tokens, idx, options, env, self);
+    };
+
+}
+
 var metalsmith = Metalsmith(__dirname);
 var sourceDir = "content";
 metalsmith
@@ -137,6 +186,10 @@ metalsmith
     }).use(md_implicit_figures, {
         dataType: true,
         figcaption: true
+    })
+    .use(markdownitAssets, {})
+    .env(function(data, meta) {
+        return data;
     })
   )
 
