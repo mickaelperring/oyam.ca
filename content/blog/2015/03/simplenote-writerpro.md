@@ -18,10 +18,7 @@ Last, the lack of integration. There isn't much to integrate on iOS, but on Mac 
 I know some of these are addressed by third party apps, but didn’t have much luck with these. Some don't support tags (though I use use tags very little), others have sync issues, yet others have other UI issues, and the features and UI become inconsistent between OS X and iOS. 
 
 
-<figure>
-  <a href="/media/images/blog/2015/03/simplenote-writerpro/simplenote.png"><img src="/media/images/blog/2015/03/simplenote-writerpro/simplenote.png" title="Simplenote OS X user interface" width="900"/></a>
-  <figcaption>Simplenote OS X user interface</figcaption>
-</figure>
+[![Simplenote OS X user interface][simplenote-screen]][simplenote-screen]
 
 ## Challengers
 
@@ -49,10 +46,7 @@ Rest of the nuances are in OS X. Because the notes are files now, changes to the
 
 One of my favourite features of this setup, though, is having the notes stored as files. This lets me access them from any editor or command line when I need them, instead of switching apps back and forth. I can easily grep the notes from command line (when looking for command sequences, etc) or open them up in vim while coding. Another side benefit is ability to use mdfind (Spotlight command line interface) to search through the notes and/or use them in command chains. 
 
-<figure>
-  <a href="/media/images/blog/2015/03/simplenote-writerpro/writerpro.png"><img src="/media/images/blog/2015/03/simplenote-writerpro/writerpro.png" title="Writer Pro iOS user interface" width="900"/></a>
-  <figcaption>Writer Pro iOS user interface</figcaption>
-</figure>
+[![Writer Pro iOS user interface][writerpro-screen]][writerpro-screen]
 
 ## The Switch
 
@@ -65,3 +59,5 @@ It feels like an end of era, and I’m even a little sad to see it leave the fir
 [evernote]: https://evernote.com
 [vesper]: http://vesperapp.co
 [simplenote-export]: https://simplenote-export.appspot.com
+[simplenote-screen]: /media/images/blog/2015/03/simplenote-writerpro/simplenote.png
+[writerpro-screen]: /media/images/blog/2015/03/simplenote-writerpro/writerpro.png

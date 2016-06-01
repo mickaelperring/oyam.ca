@@ -14,14 +14,11 @@ Any of the three keyword options in the import dialog would cause the plugin to 
     
     INFO Failed to obtain keyword info from Aperture Library.aplibrary with error 'ascii' codec can't encode character u'\u0301' in position 32930: ordinal not in range(128)
     
-<del>Here is a [diff](https://gist.github.com/mayo/ce524ed1205e67cb5945) with the fixes. The file in question is `Import.lua` inside of the `aperture_iphoto_importer.lrplugin` directory. I don't want to post the full file due to Adobe's confidentiality notice on top of the file. If anyone from Adobe reads this, would you consider open sourcing this plugin?</del>
+~~Here is a [diff](https://gist.github.com/mayo/ce524ed1205e67cb5945) with the fixes. The file in question is `Import.lua` inside of the `aperture_iphoto_importer.lrplugin` directory. I don't want to post the full file due to Adobe's confidentiality notice on top of the file. If anyone from Adobe reads this, would you consider open sourcing this plugin?~~
 
 So, what's the fix? Check your Keywords in Aperture. Visual check is not enough, though. It turns out my keywords had invisible (non-printable) characters in them. I have no idea how it happened, but the way I found out was to export the keyword list out of Aperture, open it in text editor and look there (I use vim. BB Edit, SubEthaEdit, TextMate, X Code, or any kind of developer editor should show you non-printable characters). Back in Aperture, find the offending keyword in the Keyword HUD, double click it to edit, press Command-A (select all), and re-type the keyword. Rinse and repeat with all keywords with bad characters. Now, this doesn't always update the Keywords.plist file inside of the Aperture database, and the Aperture Importer needs this to import the keywords. So, back to the Aperture Keyword HUD, and export the keyword list again, and you're set. You can delete the exported file, you don't need it.
 
-<figure>
-  <a href="/media/images/blog/2014/10/aperture-importer/dialog.png"><img src="/media/images/blog/2014/10/aperture-importer/dialog.png" title="Aperture Importer Options" width="900"/></a>
-  <figcaption>Aperture Importer Options dialog</figcaption>
-</figure>
+[![Aperture Importer Options dialog][dialog]][dialog]
 
 ## Metadata
 
@@ -43,3 +40,4 @@ If you ever had iCloud, Flickr, Facebook or other services setup in Aperture, it
 
 Another important point about keywords is that they get globbed in Lightroom. For example, if you use keyword hierarchy and have two keywords *Vancouver*, one under *British Columbia*, the other under *Washington*, all the photos with *Vancouver* keyword will be under one of the two keywords, the other will have no photos under it (but it will be imported as well). The workaround here it to track the double keywords down, and give them different names (*Vancouver*, *Vancouver2*) and revert this change once you have photos imported in Lightroom.
 
+[dialog]: /media/images/blog/2014/10/aperture-importer/dialog.png
