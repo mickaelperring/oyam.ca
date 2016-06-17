@@ -49,27 +49,51 @@ var assetManager = function() {
 
     var manager = {};
 
+    manager.assets = [];
+
+    manager.getAssets = function() { return manager.assets };
+
     manager.push = function(file, asset) {
-      console.log('=======');
-      console.log("file: %s", file);
-      console.log("requested asset: %s", asset);
+      var asset_src = null;
+      var asset_dest = null;
 
-      var asset_loc;
-      var destination_asset;
-
+      //TODO: http is not the only protocol, use regex
       if (asset[0] == '/' || asset.slice(0,4) == 'http') {
-        asset_loc = asset;
-        destination_asset = asset;
+        asset_dest = asset;
 
       } else {
         var p = path.parse(file);
 
+        //if file is an index file, look at it's containing directory
+        if (p.name == 'index') p = path.parse(p.dir);
+
         asset_loc = path.join(p.dir, p.name);
-        destination_asset = path.join("/media/images", asset_loc, asset);
+
+        asset_src = path.join(asset_loc, asset);
+        //TODO: this should always use '/', regardless of OS, as they are URLs
+        asset_dest = path.join("media/images", asset_loc, asset);
       }
 
-      console.log("asset location: %s", asset_loc);
-      console.log("asset dest: %s", destination_asset);
+      if (asset_src) {
+        manager.assets.push({ src: asset_src, dest: asset_dest }); 
+      }
+
+      return "/" + asset_dest;
+    }
+
+    manager.plugin = function(options) {
+      //TODO: option to validate assets (test if dest files exist)
+      return function(files, metalsmith, done) {
+        manager.assets.forEach(function(asset) {
+          console.log('deleting %s', asset.src);
+          delete files[asset.src];
+        });
+
+        console.log('assets in plugin');
+        console.log(manager.assets);
+
+        done();
+      }
     }
 
     return manager;
@@ -85,7 +109,8 @@ var markdownitAssets = function(md, options) {
       var token = tokens[idx];
       var aIndex = token.attrIndex('src');
 
-      assetManager.push(env.source_file, token.attrs[aIndex][1]);
+      //set the asset location to the real location
+      token.attrs[aIndex][1] = assetManager.push(env.source_file, token.attrs[aIndex][1]);
 
       // pass token to default renderer.
       return defaultRender(tokens, idx, options, env, self);
@@ -209,6 +234,16 @@ metalsmith
   //process titles for normal pages after blog, because blog is treated differently
   .use(title())
 
+  .use(assetManager.plugin())
+  .use(asset(function() {
+    var a = assetManager.assets.map(function(e) { return { 'src': "content" + "/" + e.src, 'dest': e.dest }; })
+    console.log('assets');
+    console.log(assetManager.getAssets());
+    console.log(a);
+
+    return a;
+  }()))
+
   .use(collections({
     "travel": {
       "sortBy": 'created',
@@ -217,6 +252,7 @@ metalsmith
 
     //The last collection defines article's previous/next links
     "articles": {
+      //TODO: is this affected by storing articles in dir/index.md?
       "pattern": "blog/*/**",
       "sortBy": 'created',
       reverse: true
@@ -275,7 +311,6 @@ metalsmith
     if (err) throw err;
     console.log("Build complete!");
   });
-
 
 
 function setMetadata(meta, force) {
